@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hostels Booking - Find Your Perfect Stay</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/lucide-react@latest/dist/umd/lucide-react.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Custom Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sticky-card {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 6rem; /* Adjust for header height */
+        }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Custom Gradient for buttons and highlights */
+        .btn-gradient {
+            background-image: linear-gradient(to right, #6366f1, #a855f7); /* Indigo to Purple */
+            /* You can change these colors: e.g., #8a2be2 to #4b0082 for more purple */
+        }
+        .btn-gradient:hover {
+            background-image: linear-gradient(to right, #4f46e5, #9333ea); /* Slightly darker on hover */
+        }
+        
+        /* Apply gradient to text (if desired) */
+        .text-gradient {
+            background-image: linear-gradient(to right, #6366f1, #a855f7); /* Same gradient */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* Fallback for non-webkit browsers */
+        }
+
+        /* For bordered elements (like sign-in button) */
+        .border-gradient {
+            border-image: linear-gradient(to right, #6366f1, #a855f7) 1;
+            border-width: 2px; /* Adjust border thickness if needed */
+        }
+
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 lg:px-8 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-gradient">
+                <a href="#" onclick="showListingPage(event)">Hostels Booking</a>
+            </div>
+            <form action="signin" method="posts"> 
+
+            <div class="flex items-center space-x-2">
+                <button class="px-4 py-2 text-sm font-medium border border-gradient text-gray-800 hover:text-gray-900 transition duration-300">Sign In</button>
+                <button id="header-book-now" class="px-4 py-2 text-sm font-medium text-white btn-gradient rounded-lg hover:bg-indigo-700 transition duration-300">Book Now</button>
+            </div>
+        </form>
+
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 lg:px-8 py-8">
+
+        <div id="listing-page">
+            <section class="text-center mb-12">
+                <h1 class="text-4xl lg:text-5xl font-bold text-gray-900">Find Your Perfect Stay</h1>
+                <p class="mt-4 text-lg text-gray-600">Browse through the best hostels in the city, tailored for you.</p>
+            </section>
+
+            <div id="hostel-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+        </div>
+
+        <div id="detail-page" class="hidden">
+            <button onclick="showListingPage(event)" class="mb-6 inline-flex items-center text-gradient hover:text-indigo-800 transition-colors">
+                <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+                Back to all hostels
+            </button>
+
+            <section class="mb-8">
+                <h1 id="detail-name" class="text-4xl font-bold text-gray-900"></h1>
+                <div class="flex items-center text-gray-600 mt-2">
+                    <i data-lucide="map-pin" class="w-5 h-5 mr-2 text-gray-500"></i>
+                    <span id="detail-address"></span>
+                </div>
+            </section>
+
+            <section id="detail-gallery" class="mb-12 grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <div class="lg:col-span-2">
+                    <img id="detail-img-1" src="" alt="Hostel main view" class="w-full h-full object-cover rounded-lg shadow-md">
+                </div>
+                <div class="grid grid-rows-2 gap-4">
+                    <img id="detail-img-2" src="" alt="Hostel room" class="w-full h-full object-cover rounded-lg shadow-md">
+                    <img id="detail-img-3" src="" alt="Common area" class="w-full h-full object-cover rounded-lg shadow-md">
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                <div class="lg:col-span-2">
+                    <section id="detail-features" class="mb-8">
+                        <h2 class="text-3xl font-bold border-b pb-2 mb-4">Features</h2>
+                        <div id="detail-features-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-6 text-gray-700"></div>
+                    </section>
+
+                    <section id="detail-menu" class="mb-8">
+                        <h2 class="text-3xl font-bold border-b pb-2 mb-4">Food Menu</h2>
+                        <div id="detail-menu-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+                    </section>
+
+                    <section id="detail-timings" class="mb-8">
+                        <h2 class="text-3xl font-bold border-b pb-2 mb-4">Hostel Timings</h2>
+                        <ul id="detail-timings-list" class="list-disc list-inside space-y-2 text-gray-700"></ul>
+                    </section>
+                    
+                    <section id="detail-reviews">
+                        <h2 class="text-3xl font-bold border-b pb-2 mb-4">Guest Reviews</h2>
+                        <div id="detail-reviews-list" class="space-y-6"></div>
+                    </section>
+                </div>
+
+                <div class="lg:col-span-1">
+                    <div class="sticky-card bg-white p-6 rounded-lg shadow-lg border">
+                        <h3 class="text-2xl font-bold mb-4">Pricing</h3>
+                        <div class="flex justify-between items-baseline mb-4">
+                            <span class="text-gray-700">Per Bed, Per Month</span>
+                            <span id="detail-price" class="text-3xl font-bold text-gradient"></span>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-6">Inclusive of all taxes and meals.</p>
+                        
+                        <button id="book-your-bed-button" class="w-full btn-gradient text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition duration-300 text-lg">
+                            Book Your Bed
+                        </button>
+                        
+                        <div id="detail-contact" class="mt-8 pt-6 border-t">
+                            <h3 class="text-xl font-bold mb-4">Owner Contact</h3>
+                            <div class="space-y-3 text-gray-700">
+                                <div class="flex items-center">
+                                    <i data-lucide="user-circle" class="w-5 h-5 mr-3 text-gray-500"></i>
+                                    <span id="detail-owner-name"></span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i data-lucide="phone" class="w-5 h-5 mr-3 text-gray-500"></i>
+                                    <a id="detail-owner-phone" href="" class="hover:text-gradient"></a>
+                                </div>
+                                   <div class="flex items-center">
+                                       <i data-lucide="mail" class="w-5 h-5 mr-3 text-gray-500"></i>
+                                       <a id="detail-owner-email" href="" class="hover:text-gradient"></a>
+                                   </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="booking-page" class="hidden min-h-[60vh] flex items-center justify-center">
+            <div class="bg-white p-8 rounded-lg shadow-xl border w-full max-w-lg">
+                <button onclick="showDetailPage(currentHostelId)" class="mb-6 inline-flex items-center text-gradient hover:text-indigo-800 transition-colors">
+                    <i data-lucide="arrow-left" class="w-4 h-4 mr-2"></i>
+                    Back to Hostel Details
+                </button>
+                <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">Book Your Stay at <span id="booking-hostel-name" class="text-gradient"></span></h2>
+                
+                <div id="booking-step-1" class="space-y-6">
+                    <div>
+                        <label for="checkin-date" class="block text-gray-700 text-sm font-bold mb-2">Select Check-in Date</label>
+                        <input type="date" id="checkin-date" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <button id="next-to-beds" class="w-full btn-gradient text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition duration-300 text-lg">
+                        Next: Choose Beds
+                    </button>
+                </div>
+
+                <div id="booking-step-2" class="hidden space-y-6">
+                    <div>
+                        <label for="number-of-beds" class="block text-gray-700 text-sm font-bold mb-2">Number of Beds</label>
+                        <input type="number" id="number-of-beds" min="1" value="1" class="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <p class="text-gray-600 text-sm">You are booking for <span id="selected-date-display" class="font-semibold text-gradient"></span>.</p>
+                    <button id="confirm-booking" class="w-full btn-gradient text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition duration-300 text-lg">
+                        Confirm Booking & Get Directions
+                    </button>
+                    <button onclick="showBookingStep(1)" class="w-full px-4 py-2 text-sm font-medium border border-gradient text-gray-800 hover:text-gray-900 transition duration-300 mt-2">Back</button>
+                </div>
+
+                <div id="booking-step-3" class="hidden space-y-6 text-center">
+                    <h3 class="text-2xl font-bold text-gray-900">Booking Confirmed!</h3>
+                    <p class="text-gray-700">You've successfully requested <span id="final-beds-display" class="font-semibold text-gradient"></span> beds for <span id="final-date-display" class="font-semibold text-gradient"></span> at <span id="final-hostel-name-display" class="font-semibold text-gradient"></span>.</p>
+                    <p class="text-gray-700">Please contact the hostel owner using the details below to finalize your booking.</p>
+                    
+                    <div class="mt-6 pt-4 border-t text-left">
+                        <h4 class="text-xl font-bold mb-3">Hostel Owner Details:</h4>
+                        <p><span class="font-semibold">Name:</span> <span id="booking-owner-name"></span></p>
+                        <p><span class="font-semibold">Phone:</span> <a id="booking-owner-phone" href="" class="hover:text-gradient"></a></p>
+                        <p><span class="font-semibold">Email:</span> <a id="booking-owner-email" href="" class="hover:text-gradient"></a></p>
+                    </div>
+
+                    <a id="google-maps-link" href="#" target="_blank" class="w-full inline-flex items-center justify-center btn-gradient text-white font-bold py-3 rounded-lg hover:bg-indigo-700 transition duration-300 text-lg">
+                        <i data-lucide="map-pin" class="w-5 h-5 mr-3"></i> Get Google Maps Directions
+                    </a>
+                    <button onclick="showListingPage()" class="w-full px-4 py-2 text-sm font-medium border border-gradient text-gray-800 hover:text-gray-900 transition duration-300 mt-4">Back to Hostels</button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-12">
+        <div class="container mx-auto px-8 py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p>&copy; 2024 HostelHaven. All rights reserved.</p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="facebook" class="w-6 h-6"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="instagram" class="w-6 h-6"></i></a>
+                    <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="twitter" class="w-6 h-6"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- DATABASE ---
+        // In a real application, this data would come from a server/database.
+        const hostels = [
+            {
+                id: 1,
+                name: 'The Boys Hostel',
+                address: 'Kandalakoya, 501401',
+                price: 5500,
+                rating: 4.5,
+                images: [
+                    'photos/337620911.jpg',
+                    'photos/New-Delhi_Miscellaneous_goStops-Hostel-Photo-Credit-goStops-e1594805675993.jpg',
+                    'photos/buliding.jpg' 
+                ],
+                features: [
+                    { icon: 'wifi', text: 'High-Speed Wi-Fi' },
+                    { icon: 'fan', text: 'Air Conditioning' },
+                    { icon: 'lock', text: 'Personal Lockers' },
+                    { icon: 'shower-head', text: 'Hot Showers 24/7' },
+                    { icon: 'tv', text: 'Common TV Area' },
+                ],
+                menu: {
+                    breakfast: 'Pulihora, Idli , Vada , Dosa , Bonda , Chapathi .',
+                    lunch: 'All types of vegatables, Curd.',
+                    dinner: 'Veg currys, Wednesday, Sunday - chicken, Tuesday, Friday- Egg.'
+                },
+                timings: [
+
+                    { key: 'Main Gate Closing', value: '11:00 PM' },
+                    { key: 'Breakfast', value: '7:30 AM - 9:30 AM' },
+                    { key: 'Lunch', value: '12:30 PM - 2:30 PM' },
+                    { key: 'Dinner', value: '7:30 PM - 9:30 PM' }
+                ],
+                reviews: [
+                    { name: 'Anjali Rao', rating: 4, text: 'Great location and very clean. The staff is friendly and helpful. The food was surprisingly good!', avatar: 'AR' },
+                    { name: 'Vikram Singh', rating: 5, text: 'An absolutely fantastic stay. The beds are comfortable, and the common area is vibrant.', avatar: 'VK' }
+                ],
+                owner: {
+                    name: 'Mr. Vijay Mama ',
+                    phone: '+91 6305464572',
+                    email: 'theboyshostel@gmail.com'
+                }
+            },
+            {
+                id: 2,
+                name: 'Ganesh Girls Hostel',
+                address: 'kandlakoya near CMR Techinal Campus',
+                price: 6000,
+                rating: 4.2,
+                images: [
+                    'photos/g31.png',
+                    'photos/bed.jpg',
+                    'photos/g1.jpg',
+                ],
+                features: [
+                    { icon: 'wifi', text: 'Free Wi-Fi' },
+                    
+                    { icon: 'coffee', text: '24/7 Coffee Bar' },
+                    { icon: 'lock', text: 'Secure Lockers' },
+                    { icon: 'shower-head', text: 'Hot Showers' },
+                    { icon: 'washing-machine', text: 'Laundry Service' },
+                    { icon: 'gym', text: 'GYM service' },
+
+                ],
+                menu: {
+                    breakfast: 'Pulihora, Idli , Vada , Dosa , Bonda , Chapathi, Oats, Paratha, Dosa, Juice.',
+                    lunch: 'Veg Thali, Rice, Mixed Veg.',
+                    dinner: 'Chicken Curry (opt.), Paneer Butter Masala, Rice.'
+                },
+                timings: [
+            
+                    { key: 'Main Gate Closing', value: '10:00 PM' },
+                    { key: 'Breakfast', value: '8:00 AM - 10:00 AM' },
+                    { key: 'Lunch', value: '12:30 PM - 2:30 PM' },
+                    { key: 'Dinner', value: '7:30 PM - 9:30 PM' }
+                ],
+                reviews: [
+                    { name: 'Priya Sharma', rating: 5, text: 'Loved the vibe here! The food like at Hoome.', avatar: 'PS' }
+                ],
+                owner: {
+                    name: 'Mr. Ganesh Nayak',
+                    phone: '+91 98765 43210',
+                    email: 'ganeshgirlshostel@gmail.com'
+                }
+            },
+            {
+                id: 4,
+                name: 'Hostel',
+                address: 'kandalkoya, Medchal',
+                price: 7000,
+                rating: 4.8,
+                images: [
+                    'photos/w1.jpeg',
+                    'photos/room.avif',
+                    'photos/library.jpg',
+                    'photos/w1.jpeg',
+                ],
+                features: [
+                    { icon: 'wifi', text: 'Fiber Optic Wi-Fi' },
+                    { icon: 'book', text: 'Extensive Library' },
+                    { icon: 'lamp-desk', text: 'Study Desks' },
+                    { icon: 'washing-machine', text: 'Laundry Service' },
+                    { icon: 'lock', text: 'High-Security Lockers' },
+                    { icon: 'air-vent', text: 'Central AC' },
+                ],
+                menu: {
+                    breakfast: 'Continental & Indian mix, Fresh fruits, Milk.',
+                    lunch: 'Indian Thali.',
+                    dinner: 'Specialty Dinner, Roti, Rice, Dal, Dessert.'
+                },
+                timings: [
+                    { key: 'Main Gate Closing', value: '10:00 PM' },
+                    { key: 'Breakfast', value: '8:00 AM - 10:00 AM' },
+                    { key: 'Lunch', value: '12:30 PM - 2:30 PM' },
+                    { key: 'Dinner', value: '7:30 PM - 9:30 PM' }
+            
+                ],
+                reviews: [
+                    { name: 'Shruthi', rating: 5, text: 'Perfect for students and remote workers. The internet is very fast and it\'s very quiet.', avatar: 'AD' },
+                    { name: 'Ammu', rating: 4.4, text: 'Best for co-livein and safe', avatar: 'AD' }
+                ],
+                owner: {
+                    name: 'Dheeraj',
+                    phone: '+91 87654 32109',
+                    email: 'co-livein@gmail.com'
+                }
+            },
+            {
+                id: 3,
+                name: 'Co-Live In Hostel',
+                address: 'kandalkoya, Medchal',
+                price: 7000,
+                rating: 4.8,
+                images: [
+                    'photos/room.avif',
+                    'photos/library.jpg',
+                    'photos/w1.jpeg',
+                ],
+                features: [
+                    { icon: 'wifi', text: 'Fiber Optic Wi-Fi' },
+                    { icon: 'book', text: 'Extensive Library' },
+                    { icon: 'lamp-desk', text: 'Study Desks' },
+                    { icon: 'washing-machine', text: 'Laundry Service' },
+                    { icon: 'lock', text: 'High-Security Lockers' },
+                    { icon: 'air-vent', text: 'Central AC' },
+                ],
+                menu: {
+                    breakfast: 'Continental & Indian mix, Fresh fruits, Milk.',
+                    lunch: 'Indian Thali.',
+                    dinner: 'Specialty Dinner, Roti, Rice, Dal, Dessert.'
+                },
+                timings: [
+                    { key: 'Main Gate Closing', value: '10:00 PM' },
+                    { key: 'Breakfast', value: '8:00 AM - 10:00 AM' },
+                    { key: 'Lunch', value: '12:30 PM - 2:30 PM' },
+                    { key: 'Dinner', value: '7:30 PM - 9:30 PM' }
+            
+                ],
+                reviews: [
+                    { name: 'Shruthi', rating: 5, text: 'Perfect for students and remote workers. The internet is very fast and it\'s very quiet.', avatar: 'AD' },
+                    { name: 'Ammu', rating: 4.4, text: 'Best for co-livein and safe', avatar: 'AD' }
+                ],
+                owner: {
+                    name: 'Dheeraj',
+                    phone: '+91 87654 32109',
+                    email: 'co-livein@gmail.com'
+                }
+            }
+        
+        ];
+
+        // --- PAGE ELEMENTS ---
+        const listingPage = document.getElementById('listing-page');
+        const detailPage = document.getElementById('detail-page');
+        const bookingPage = document.getElementById('booking-page'); // New
+        const hostelGrid = document.getElementById('hostel-grid');
+        const headerBookNow = document.getElementById('header-book-now');
+
+        // Booking page elements
+        const bookYourBedButton = document.getElementById('book-your-bed-button');
+        const bookingHostelName = document.getElementById('booking-hostel-name');
+        const checkinDateInput = document.getElementById('checkin-date');
+        const nextToBedsButton = document.getElementById('next-to-beds');
+        const numberOfBedsInput = document.getElementById('number-of-beds');
+        const confirmBookingButton = document.getElementById('confirm-booking');
+        const selectedDateDisplay = document.getElementById('selected-date-display');
+        const finalBedsDisplay = document.getElementById('final-beds-display');
+        const finalDateDisplay = document.getElementById('final-date-display');
+        const finalHostelNameDisplay = document.getElementById('final-hostel-name-display');
+        const googleMapsLink = document.getElementById('google-maps-link');
+        const bookingOwnerName = document.getElementById('booking-owner-name');
+        const bookingOwnerPhone = document.getElementById('booking-owner-phone');
+        const bookingOwnerEmail = document.getElementById('booking-owner-email');
+
+        const bookingStep1 = document.getElementById('booking-step-1');
+        const bookingStep2 = document.getElementById('booking-step-2');
+        const bookingStep3 = document.getElementById('booking-step-3');
+
+
+        let currentHostelId = null; // To store the ID of the currently viewed hostel
+        let selectedCheckinDate = null;
+
+        // --- FUNCTIONS ---
+
+        // Function to show the main listing page
+        function showListingPage(event) {
+            if (event) event.preventDefault();
+            listingPage.classList.remove('hidden');
+            detailPage.classList.add('hidden');
+            bookingPage.classList.add('hidden'); // Hide booking page
+            headerBookNow.classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        // Function to create a rating display (e.g., 4.5 stars)
+        function createRatingStars(rating) {
+            let starsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHTML += `<i data-lucide="star" class="w-4 h-4 text-yellow-500 fill-current"></i>`;
+                } else if (i - 0.5 <= rating) {
+                    starsHTML += `<i data-lucide="star-half" class="w-4 h-4 text-yellow-500 fill-current"></i>`;
+                } else {
+                    starsHTML += `<i data-lucide="star" class="w-4 h-4 text-gray-300 fill-current"></i>`;
+                }
+            }
+            return starsHTML;
+        }
+        
+        // Function to create a review card
+        function createReviewCard(review) {
+            const ratingStars = createRatingStars(review.rating);
+            return `
+                <div class="bg-white p-6 rounded-lg shadow-sm border">
+                    <div class="flex items-start">
+                        <img src="https://placehold.co/40x40/c7d2fe/3730a3?text=${review.avatar}" alt="Reviewer avatar" class="w-10 h-10 rounded-full mr-4">
+                        <div>
+                            <div class="flex flex-col sm:flex-row sm:items-center mb-1">
+                                <h4 class="font-semibold">${review.name}</h4>
+                                <div class="flex items-center sm:ml-4 text-yellow-500">${ratingStars}
+                                <span class="text-gray-600 text-sm ml-2">${review.rating.toFixed(1)}/5.0</span></div>
+                            </div>
+                            <p class="text-gray-600">"${review.text}"</p>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+
+        // Function to show the detail page for a specific hostel
+        function showDetailPage(hostelId) {
+            const hostel = hostels.find(h => h.id === hostelId);
+            if (!hostel) return;
+
+            currentHostelId = hostelId; // Store the current hostel ID
+
+            // Hide listing and booking, show detail
+            listingPage.classList.add('hidden');
+            bookingPage.classList.add('hidden'); // Hide booking page
+            detailPage.classList.remove('hidden');
+            headerBookNow.classList.add('hidden');
+
+            // Populate detail page with hostel data
+            document.getElementById('detail-name').textContent = hostel.name;
+            document.getElementById('detail-address').textContent = hostel.address;
+            document.getElementById('detail-price').textContent = `₹${hostel.price}`;
+            
+            document.getElementById('detail-img-1').src = hostel.images[0];
+            document.getElementById('detail-img-2').src = hostel.images[1];
+            document.getElementById('detail-img-3').src = hostel.images[2];
+
+            // Populate Features
+            const featuresGrid = document.getElementById('detail-features-grid');
+            featuresGrid.innerHTML = hostel.features.map(f => `
+                <div class="flex items-center"><i data-lucide="${f.icon}" class="w-5 h-5 mr-3 text-gradient"></i> ${f.text}</div> 
+            `).join('');
+
+            // Populate Menu
+            const menuGrid = document.getElementById('detail-menu-grid');
+            menuGrid.innerHTML = `
+                <div class="bg-white p-4 rounded-lg shadow-sm border">
+                    <h3 class="font-semibold text-lg mb-2">Breakfast</h3>
+                    <p class="text-gray-600">${hostel.menu.breakfast}</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border">
+                    <h3 class="font-semibold text-lg mb-2">Lunch</h3>
+                    <p class="text-gray-600">${hostel.menu.lunch}</p>
+                </div>
+                <div class="bg-white p-4 rounded-lg shadow-sm border">
+                    <h3 class="font-semibold text-lg mb-2">Dinner</h3>
+                    <p class="text-gray-600">${hostel.menu.dinner}</p>
+                </div>
+            `;
+
+            // Populate Timings
+            const timingsList = document.getElementById('detail-timings-list');
+            timingsList.innerHTML = hostel.timings.map(t => `
+                <li><span class="font-semibold">${t.key}:</span> ${t.value}</li>
+            `).join('');
+
+            // Populate Reviews
+            const reviewsList = document.getElementById('detail-reviews-list');
+            reviewsList.innerHTML = hostel.reviews.map(createReviewCard).join('');
+
+            // Populate Owner Contact
+            document.getElementById('detail-owner-name').textContent = hostel.owner.name;
+            document.getElementById('detail-owner-phone').textContent = hostel.owner.phone;
+            document.getElementById('detail-owner-phone').href = `tel:${hostel.owner.phone}`;
+            document.getElementById('detail-owner-email').textContent = hostel.owner.email;
+            document.getElementById('detail-owner-email').href = `mailto:${hostel.owner.email}`;
+
+            // Re-initialize Lucide icons for the new content
+            lucide.createIcons();
+            window.scrollTo(0, 0);
+        }
+
+        // Function to render the hostel listing cards
+        function renderHostelList() {
+            hostelGrid.innerHTML = ''; // Clear existing grid
+            hostels.forEach(hostel => {
+                const card = `
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 border">
+                    <img src="${hostel.images[0]}" alt="${hostel.name}" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                             <h3 class="text-xl font-bold text-gray-900">${hostel.name}</h3>
+                             <div class="flex items-center gap-1 text-sm font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                                 <i data-lucide="star" class="w-4 h-4 fill-current"></i>
+                                 <span>${hostel.rating}</span>
+                             </div>
+                        </div>
+                        <p class="text-gray-600 mb-4">${hostel.address}</p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-xl font-bold text-gradient">₹${hostel.price}</span> <span class="text-gray-500 text-sm">/Month</span>
+                            </div>
+                            <button onclick="showDetailPage(${hostel.id})" class="px-4 py-2 text-sm font-medium text-white btn-gradient rounded-lg hover:bg-indigo-700 transition duration-300">
+                                View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                `;
+                hostelGrid.innerHTML += card;
+            });
+            lucide.createIcons();
+        }
+
+        // --- BOOKING FUNCTIONS ---
+
+        // Function to show a specific booking step
+        function showBookingStep(step) {
+            bookingStep1.classList.add('hidden');
+            bookingStep2.classList.add('hidden');
+            bookingStep3.classList.add('hidden');
+
+            if (step === 1) {
+                bookingStep1.classList.remove('hidden');
+            } else if (step === 2) {
+                bookingStep2.classList.remove('hidden');
+            } else if (step === 3) {
+                bookingStep3.classList.remove('hidden');
+            }
+            lucide.createIcons(); // Re-initialize icons if new ones appear
+        }
+
+        // Event listener for "Book Your Bed" button on detail page
+        bookYourBedButton.addEventListener('click', () => {
+            const hostel = hostels.find(h => h.id === currentHostelId);
+            if (!hostel) return;
+
+            // Set hostel name on booking page
+            bookingHostelName.textContent = hostel.name;
+
+            // Reset date and beds input
+            checkinDateInput.value = '';
+            numberOfBedsInput.value = 1;
+            
+            // Set minimum date for check-in to today
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+            const dd = String(today.getDate()).padStart(2, '0');
+            checkinDateInput.min = `${yyyy}-${mm}-${dd}`;
+
+            detailPage.classList.add('hidden');
+            bookingPage.classList.remove('hidden');
+            headerBookNow.classList.add('hidden'); // Keep header book now hidden on booking page
+            showBookingStep(1); // Start with step 1
+            window.scrollTo(0, 0);
+        });
+
+        // Event listener for "Next: Choose Beds" button
+        nextToBedsButton.addEventListener('click', () => {
+            selectedCheckinDate = checkinDateInput.value;
+            if (!selectedCheckinDate) {
+                alert('Please select a check-in date.');
+                return;
+            }
+            selectedDateDisplay.textContent = new Date(selectedCheckinDate).toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            showBookingStep(2);
+        });
+
+        // Event listener for "Confirm Booking & Get Directions" button
+        confirmBookingButton.addEventListener('click', () => {
+            const numBeds = numberOfBedsInput.value;
+            if (numBeds <= 0) {
+                alert('Please enter a valid number of beds.');
+                return;
+            }
+
+            const hostel = hostels.find(h => h.id === currentHostelId);
+            if (!hostel) return;
+
+            finalBedsDisplay.textContent = numBeds;
+            finalDateDisplay.textContent = new Date(selectedCheckinDate).toLocaleDateString('en-IN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            finalHostelNameDisplay.textContent = hostel.name;
+
+            // Populate owner details on final booking page
+            bookingOwnerName.textContent = hostel.owner.name;
+            bookingOwnerPhone.textContent = hostel.owner.phone;
+            bookingOwnerPhone.href = `tel:${hostel.owner.phone}`;
+            bookingOwnerEmail.textContent = hostel.owner.email;
+            bookingOwnerEmail.href = `mailto:${hostel.owner.email}`;
+
+            // Generate Google Maps URL
+            const encodedAddress = encodeURIComponent(hostel.address);
+            googleMapsLink.href = `https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`;
+
+            showBookingStep(3);
+        });
+
+
+        // --- INITIALIZATION ---
+        // Render the initial list of hostels when the page loads
+        document.addEventListener('DOMContentLoaded', renderHostelList);
+
+    </script>
+</body>
+</html>
